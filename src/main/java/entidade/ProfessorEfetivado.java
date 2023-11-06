@@ -123,6 +123,10 @@ public class ProfessorEfetivado {
         }
         return visões.toArray(new ProfessorEfetivado[visões.size()]);
     }
+    
+    public ProfessorEfetivado getVisão(){
+        return new ProfessorEfetivado(nome, cpf);
+    }
 
     public String getCpf() {
         return cpf;
@@ -155,9 +159,10 @@ public class ProfessorEfetivado {
     public void setTitulação(String titulação) {
         this.titulação = titulação;
     }
+    
 
     public String toString() {
-        return String.format("%s [%s]", cpf, nome);
+        return cpf+" ["+nome+"]";
     }
 
 }

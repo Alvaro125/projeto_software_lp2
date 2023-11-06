@@ -2,6 +2,7 @@ package interfaces;
 
 import controle.ControladorCadastroProfessoresEfetivos;
 import entidade.ProfessorEfetivado;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 
@@ -50,6 +51,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        professores_cadastradosLabel = new javax.swing.JLabel();
         professores_cadastradosComboBox = new javax.swing.JComboBox<>();
         nomeTextField = new javax.swing.JTextField();
         nomeLabel = new javax.swing.JLabel();
@@ -70,7 +72,14 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         setTitle("Cadastrar Professores Efetivos");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        professores_cadastradosComboBox.setModel(professores_cadastrados);
+        professores_cadastradosLabel.setText("Professores Cadastrados");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(19, 10, 0, 0);
+        getContentPane().add(professores_cadastradosLabel, gridBagConstraints);
+
+        professores_cadastradosComboBox.setModel(new DefaultComboBoxModel(professores_cadastrados));
         professores_cadastradosComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 professores_cadastradosComboBoxActionPerformed(evt);
@@ -78,7 +87,9 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(13, 6, 0, 0);
         getContentPane().add(professores_cadastradosComboBox, gridBagConstraints);
 
         nomeTextField.setPreferredSize(new java.awt.Dimension(200, 30));
@@ -221,9 +232,10 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.ipadx = 213;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(85, 14, 48, 6);
+        gridBagConstraints.insets = new java.awt.Insets(58, 14, 45, 6);
         getContentPane().add(comandosPanel, gridBagConstraints);
 
         pack();
@@ -235,25 +247,36 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         if (professorEfetivado != null) mensagem_erro = controlador.inserirProfessorEfetivo(professorEfetivado);
         else mensagem_erro = "Algum atributo do professor não foi informado";
         if (mensagem_erro == null) {
-            informarSucesso("Inserção bem sucedida");
+            ProfessorEfetivado visão = professorEfetivado.getVisão();
+            professores_cadastradosComboBox.addItem(visão);
+            professores_cadastradosComboBox.setSelectedItem(visão);
+//            informarSucesso("Inserção bem sucedida");
         }
         else informarErro(mensagem_erro);
     }//GEN-LAST:event_inserirProfessorEfetivado
 
     private void consultarProfessorEfetivado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultarProfessorEfetivado
-        String cpf = cpfTextField.getText();
+        ProfessorEfetivado visão =(ProfessorEfetivado) professores_cadastradosComboBox.getSelectedItem();
         String mensagem_erro = null;
         ProfessorEfetivado professorEfetivado = null;
-        if (!cpf.isEmpty()){
-            professorEfetivado = ProfessorEfetivado.buscarProfessorEfetivado(cpf);
+        if (visão != null){
+            professorEfetivado = ProfessorEfetivado.buscarProfessorEfetivado(visão.getCpf());
             if (professorEfetivado == null) mensagem_erro="Professor não Cadastrado";
-        } else mensagem_erro = "CPF do professor não informado";
+        } else mensagem_erro = "Nenhum Professor Selecionado";
         if (mensagem_erro == null){
             nomeTextField.setText(professorEfetivado.getNome());
             emailTextField.setText(professorEfetivado.getEmail());
+            cpfTextField.setText(professorEfetivado.getCpf());
             titulaçãoTextField.setText(professorEfetivado.getTitulação());
         } else informarErro(mensagem_erro);
     }//GEN-LAST:event_consultarProfessorEfetivado
+
+    private ProfessorEfetivado getVisãoAlterada(String cpf) {
+        for (ProfessorEfetivado visão : professores_cadastrados) {
+            if(visão.getCpf().equals(cpf)) return visão;
+        }
+        return null;
+    }
 
     private void limparPainel(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limparPainel
         limparCampos();
@@ -264,16 +287,29 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         String mensagem_erro = null;
         if (professorEfetivado != null) mensagem_erro = controlador.alterarProfessorEfetivo(professorEfetivado);
         else mensagem_erro = "CPF do professor não informado";
-        if (mensagem_erro == null) informarSucesso("Alteração bem sucedida");
+        if (mensagem_erro == null){
+            ProfessorEfetivado visão =getVisãoAlterada(professorEfetivado.getCpf());
+            if(visão != null){
+                visão.setNome(professorEfetivado.getNome());
+                professores_cadastradosComboBox.updateUI();
+                professores_cadastradosComboBox.setSelectedItem(visão);
+            }
+            informarSucesso("Alteração bem sucedida");
+        } 
         else informarErro(mensagem_erro);
     }//GEN-LAST:event_alterarProfessorEfetivado
 
     private void removerProfessorEfetivado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerProfessorEfetivado
-        String cpf = cpfTextField.getText();
+        ProfessorEfetivado visão =(ProfessorEfetivado) professores_cadastradosComboBox.getSelectedItem();
         String mensagem_erro = null;
-        if (!cpf.isEmpty()) mensagem_erro = controlador.removerProfessorEfetivo(cpf);
-        else mensagem_erro = "CPF do professor não informado";
-        if (mensagem_erro == null) informarSucesso("Remoção bem sucedida");
+        if (visão != null) mensagem_erro = controlador.removerProfessorEfetivo(visão.getCpf());
+        else mensagem_erro = "Nenhum professor selecionado";
+        if (mensagem_erro == null){
+            professores_cadastradosComboBox.removeItem(visão);
+            if (professores_cadastrados.length >= 1) professores_cadastradosComboBox.setSelectedIndex(0);
+            else professores_cadastradosComboBox.setSelectedIndex(-1);
+            informarSucesso("Remoção bem sucedida");
+        }
         else informarErro(mensagem_erro);
     }//GEN-LAST:event_removerProfessorEfetivado
 
@@ -334,9 +370,11 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     private javax.swing.JButton limparButton;
     private javax.swing.JLabel nomeLabel;
     private javax.swing.JTextField nomeTextField;
-    private javax.swing.JComboBox<String> professores_cadastradosComboBox;
+    private javax.swing.JComboBox<ProfessorEfetivado> professores_cadastradosComboBox;
+    private javax.swing.JLabel professores_cadastradosLabel;
     private javax.swing.JButton removerButton;
     private javax.swing.JLabel titulaçãoLabel;
     private javax.swing.JTextField titulaçãoTextField;
     // End of variables declaration//GEN-END:variables
+
 }
