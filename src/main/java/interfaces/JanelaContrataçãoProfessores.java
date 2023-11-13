@@ -1,5 +1,6 @@
 package interfaces;
 
+import controle.ControladorCadastroFaculdades;
 import controle.ControladorCadastroProfessoresEfetivos;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -29,6 +30,8 @@ public class JanelaContrataçãoProfessores extends javax.swing.JFrame {
         contratação_professoresMenuBar = new javax.swing.JMenuBar();
         professor_efetivadoMenu = new javax.swing.JMenu();
         cadastrar_professor_efetivadoMenuItem = new javax.swing.JMenuItem();
+        faculdadeMenu = new javax.swing.JMenu();
+        cadastrar_faculdadeMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Contratação de Professores");
@@ -49,6 +52,18 @@ public class JanelaContrataçãoProfessores extends javax.swing.JFrame {
         professor_efetivadoMenu.add(cadastrar_professor_efetivadoMenuItem);
 
         contratação_professoresMenuBar.add(professor_efetivadoMenu);
+
+        faculdadeMenu.setText("Faculdades");
+
+        cadastrar_faculdadeMenuItem.setText("Cadastrar");
+        cadastrar_faculdadeMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cadastrarFaculdade(evt);
+            }
+        });
+        faculdadeMenu.add(cadastrar_faculdadeMenuItem);
+
+        contratação_professoresMenuBar.add(faculdadeMenu);
 
         setJMenuBar(contratação_professoresMenuBar);
 
@@ -78,6 +93,10 @@ public class JanelaContrataçãoProfessores extends javax.swing.JFrame {
             Logger.getLogger(JanelaContrataçãoProfessores.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_terminarSistema
+
+    private void cadastrarFaculdade(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cadastrarFaculdade
+        new ControladorCadastroFaculdades();
+    }//GEN-LAST:event_cadastrarFaculdade
 
     /**
      * @param args the command line arguments
@@ -119,8 +138,10 @@ public class JanelaContrataçãoProfessores extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem cadastrar_faculdadeMenuItem;
     private javax.swing.JMenuItem cadastrar_professor_efetivadoMenuItem;
     private javax.swing.JMenuBar contratação_professoresMenuBar;
+    private javax.swing.JMenu faculdadeMenu;
     private javax.swing.JMenu professor_efetivadoMenu;
     // End of variables declaration//GEN-END:variables
 }

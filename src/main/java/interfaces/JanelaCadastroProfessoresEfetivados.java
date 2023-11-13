@@ -294,7 +294,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
                 professores_cadastradosComboBox.updateUI();
                 professores_cadastradosComboBox.setSelectedItem(visão);
             }
-            informarSucesso("Alteração bem sucedida");
+//            informarSucesso("Alteração bem sucedida");
         } 
         else informarErro(mensagem_erro);
     }//GEN-LAST:event_alterarProfessorEfetivado
@@ -308,7 +308,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
             professores_cadastradosComboBox.removeItem(visão);
             if (professores_cadastrados.length >= 1) professores_cadastradosComboBox.setSelectedIndex(0);
             else professores_cadastradosComboBox.setSelectedIndex(-1);
-            informarSucesso("Remoção bem sucedida");
+//            informarSucesso("Remoção bem sucedida");
         }
         else informarErro(mensagem_erro);
     }//GEN-LAST:event_removerProfessorEfetivado
