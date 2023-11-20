@@ -52,7 +52,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         java.awt.GridBagConstraints gridBagConstraints;
 
         professores_cadastradosLabel = new javax.swing.JLabel();
-        professores_cadastradosComboBox = new javax.swing.JComboBox<>();
+        professores_cadastradosComboBox = new javax.swing.JComboBox();
         nomeTextField = new javax.swing.JTextField();
         nomeLabel = new javax.swing.JLabel();
         cpfLabel = new javax.swing.JLabel();

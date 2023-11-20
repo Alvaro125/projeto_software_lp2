@@ -8,7 +8,8 @@ CREATE TABLE Professores(
     Email varchar(255) NOT NULL
 );
 CREATE TABLE Faculdades(
-    Sigla varchar(15) NOT NULL PRIMARY KEY,
+    Sequencial INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Sigla varchar(15) NOT NULL UNIQUE,
     NomeCompleto varchar(255) NOT NULL,
     ÁreaConhecimento INT NOT NULL,
     AnoCriação INT NOT NULL

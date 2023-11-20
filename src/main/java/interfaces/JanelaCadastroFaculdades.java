@@ -3,7 +3,6 @@ package interfaces;
 import controle.ControladorCadastroFaculdades;
 import entidade.Faculdade;
 import entidade.Faculdade.ÁreaConhecimento;
-import entidade.ProfessorEfetivado;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -32,6 +31,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         nomeCompletoTextField.setText("");
         anoCriaçãoTextField.setText("");
         áreaConhecimentoComboBox.setSelectedIndex(-1);
+        sequencialTextField.setText("");
     }
     
     private Faculdade obterFaculdadeInformada(){
@@ -43,7 +43,10 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         if (áreaConhecimento.isEmpty()) return null;
         int anoCriação = Integer.parseInt((anoCriaçãoTextField.getText()));
         if (anoCriação < 0) return null;
-        return new Faculdade(sigla, nomeCompleto, ÁreaConhecimento.valueOf(áreaConhecimento), anoCriação);
+        String sequencial_str = sequencialTextField.getText();
+        int sequencial = 0;
+        if (!sequencial_str.isEmpty()) sequencial = Integer.parseInt(sequencial_str);
+        return new Faculdade(sequencial,sigla, nomeCompleto, ÁreaConhecimento.valueOf(áreaConhecimento), anoCriação);
     }
 
     private JanelaCadastroFaculdades() {
@@ -62,13 +65,13 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
 
         faculdades_cadastradasLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        faculdades_cadastradasList = new javax.swing.JList<>();
+        faculdades_cadastradasList = new javax.swing.JList();
         siglaLabel = new javax.swing.JLabel();
         siglaTextField = new javax.swing.JTextField();
         nomeCompletoLabel = new javax.swing.JLabel();
         nomeCompletoTextField = new javax.swing.JTextField();
         áreaConhecimentoLabel = new javax.swing.JLabel();
-        áreaConhecimentoComboBox = new javax.swing.JComboBox<>();
+        áreaConhecimentoComboBox = new javax.swing.JComboBox();
         anoCriaçãoLabel = new javax.swing.JLabel();
         anoCriaçãoTextField = new javax.swing.JTextField();
         comandosPanel = new javax.swing.JPanel();
@@ -77,6 +80,8 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         consultarButton = new javax.swing.JButton();
         alterarButton = new javax.swing.JButton();
         removerButton = new javax.swing.JButton();
+        sequencialLabel = new javax.swing.JLabel();
+        sequencialTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastrar Professores Efetivos");
@@ -104,7 +109,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         siglaLabel.setText("Sigla");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(30, 39, 0, 0);
         getContentPane().add(siglaLabel, gridBagConstraints);
@@ -117,7 +122,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.ipadx = 243;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(20, 0, 0, 0);
@@ -126,7 +131,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         nomeCompletoLabel.setText("Nome Completo");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 39, 0, 0);
         getContentPane().add(nomeCompletoLabel, gridBagConstraints);
@@ -139,7 +144,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.ipadx = 133;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
@@ -148,7 +153,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         áreaConhecimentoLabel.setText("Área de Conhecimento");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 38, 0, 0);
         getContentPane().add(áreaConhecimentoLabel, gridBagConstraints);
@@ -161,14 +166,14 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         getContentPane().add(áreaConhecimentoComboBox, gridBagConstraints);
 
         anoCriaçãoLabel.setText("Ano de Criação");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 39, 0, 0);
         getContentPane().add(anoCriaçãoLabel, gridBagConstraints);
@@ -181,7 +186,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.ipadx = 210;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -251,13 +256,38 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.ipadx = 213;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(58, 14, 45, 6);
         getContentPane().add(comandosPanel, gridBagConstraints);
+
+        sequencialLabel.setText("Identificador Sequencial");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(9, 0, 0, 0);
+        getContentPane().add(sequencialLabel, gridBagConstraints);
+
+        sequencialTextField.setEditable(false);
+        sequencialTextField.setPreferredSize(new java.awt.Dimension(100, 30));
+        sequencialTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sequencialTextFieldActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipady = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
+        gridBagConstraints.weightx = 0.3;
+        gridBagConstraints.weighty = 0.4;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        getContentPane().add(sequencialTextField, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -268,8 +298,11 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         if (faculdade != null) mensagem_erro = controlador.inserirFaculdade(faculdade);
         else mensagem_erro = "Algum atributo da faculdade não foi informado";
         if (mensagem_erro == null) {
+            int sequencial = Faculdade.últimoSequencial();
+            faculdade.setSequencial(sequencial);
             modelo_lista_faculdades.addElement(faculdade.getVisão());
             faculdades_cadastradasList.setSelectedIndex(modelo_lista_faculdades.size()-1);
+            sequencialTextField.setText(""+sequencial);
         }
         else informarErro(mensagem_erro);
     }//GEN-LAST:event_inserirFaculdade
@@ -279,7 +312,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
         String mensagem_erro = null;
         Faculdade faculdade = null;
         if (visão != null){
-            faculdade = Faculdade.buscarFaculdade(visão.getSigla());
+            faculdade = Faculdade.buscarFaculdade(visão.getSequencial());
             if (faculdade == null) mensagem_erro="Faculdade não Cadastrado";
         } else mensagem_erro = "Nenhuma Faculdade Selecionado";
         if (mensagem_erro == null){
@@ -287,6 +320,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
             anoCriaçãoTextField.setText(String.valueOf(faculdade.getAnoCriação()));
             nomeCompletoTextField.setText(faculdade.getNomeCompleto());
             áreaConhecimentoComboBox.setSelectedIndex(faculdade.getÁreaConhecimento().ordinal());
+            sequencialTextField.setText(""+faculdade.getSequencial());
         } else informarErro(mensagem_erro);
     }//GEN-LAST:event_consultarFaculdade
 
@@ -304,6 +338,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
             Faculdade visão = (Faculdade) faculdades_cadastradasList.getSelectedValue();
             if(visão != null){
                 visão.setNomeCompleto(faculdade.getNomeCompleto());
+                visão.setSigla(faculdade.getSigla());
                 faculdades_cadastradasList.updateUI();
             }
         } 
@@ -313,7 +348,7 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
     private void removerFaculdade(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerFaculdade
         Faculdade visão =(Faculdade) faculdades_cadastradasList.getSelectedValue();
         String mensagem_erro = null;
-        if (visão != null) mensagem_erro = controlador.removerFaculdade(visão.getSigla());
+        if (visão != null) mensagem_erro = controlador.removerFaculdade(visão.getSequencial());
         else mensagem_erro = "Nenhuma faculdade selecionado";
         if (mensagem_erro == null){
             modelo_lista_faculdades.removeElement(visão);
@@ -336,6 +371,10 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
     private void áreaConhecimentoComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_áreaConhecimentoComboBoxActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_áreaConhecimentoComboBoxActionPerformed
+
+    private void sequencialTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequencialTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sequencialTextFieldActionPerformed
 
     private void informarSucesso(String mensagem) {
         JOptionPane.showConfirmDialog(this, mensagem, "Informação", JOptionPane.INFORMATION_MESSAGE);
@@ -396,6 +435,8 @@ public class JanelaCadastroFaculdades extends javax.swing.JFrame {
     private javax.swing.JLabel nomeCompletoLabel;
     private javax.swing.JTextField nomeCompletoTextField;
     private javax.swing.JButton removerButton;
+    private javax.swing.JLabel sequencialLabel;
+    private javax.swing.JTextField sequencialTextField;
     private javax.swing.JLabel siglaLabel;
     private javax.swing.JTextField siglaTextField;
     private javax.swing.JComboBox<String> áreaConhecimentoComboBox;

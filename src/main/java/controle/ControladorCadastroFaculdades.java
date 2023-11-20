@@ -16,14 +16,14 @@ public class ControladorCadastroFaculdades {
     }
     
     public static String alterarFaculdade(Faculdade faculdade){
-        Faculdade faculdade1 = Faculdade.buscarFaculdade(faculdade.getSigla());
+        Faculdade faculdade1 = Faculdade.buscarFaculdade(faculdade.getSequencial());
         if (faculdade1 != null) return Faculdade.alterarFaculdade(faculdade);
         else return "Sigla da Faculdade não Cadastrada";
     }
     
-    public static String removerFaculdade(String sigla){
-        Faculdade faculdade1 = Faculdade.buscarFaculdade(sigla);
-        if (faculdade1 != null) return Faculdade.removerFaculdade(sigla);
+    public static String removerFaculdade(int sequencial){
+        Faculdade faculdade1 = Faculdade.buscarFaculdade(sequencial);
+        if (faculdade1 != null) return Faculdade.removerFaculdade(sequencial);
         else return "Sigla da Faculdade não Cadastrada";
     }
 }

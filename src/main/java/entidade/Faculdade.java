@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package entidade;
 
 import java.sql.PreparedStatement;
@@ -10,10 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import persistência.BD;
 
-/**
- *
- * @author user
- */
 public class Faculdade {
     public enum ÁreaConhecimento{
         Ciências_Exatas_e_da_Terra,
@@ -26,24 +18,35 @@ public class Faculdade {
         Ciências_Humanas
     }
     
+    protected int sequencial;
     protected String sigla;
     protected String nomeCompleto;
     protected ÁreaConhecimento áreaConhecimento;
     protected int anoCriação;
 
+    public Faculdade(int sequencial, String sigla, String nomeCompleto, ÁreaConhecimento áreaConhecimento, int anoCriação) {
+        this.sequencial = sequencial;
+        this.sigla = sigla;
+        this.nomeCompleto = nomeCompleto;
+        this.áreaConhecimento = áreaConhecimento;
+        this.anoCriação = anoCriação;
+    }
+    
     public Faculdade(String sigla, String nomeCompleto, ÁreaConhecimento áreaConhecimento, int anoCriação) {
         this.sigla = sigla;
         this.nomeCompleto = nomeCompleto;
         this.áreaConhecimento = áreaConhecimento;
         this.anoCriação = anoCriação;
     }
-    public Faculdade(String sigla, String nomeCompleto) {
+    
+    public Faculdade(int sequencial, String sigla, String nomeCompleto) {
+        this.sequencial = sequencial;
         this.sigla = sigla;
         this.nomeCompleto = nomeCompleto;
     }
 
     public static Faculdade[] getVisões() {
-        String sql = "SELECT Sigla,NomeCompleto FROM Faculdades";
+        String sql = "SELECT Sequencial,Sigla,NomeCompleto FROM Faculdades";
         ResultSet lista_resultados = null;
         ArrayList<Faculdade> visões = new ArrayList();
         try {
@@ -52,7 +55,8 @@ public class Faculdade {
             while (lista_resultados.next()) {
                 String nomeCompleto = lista_resultados.getString("NomeCompleto");
                 String sigla = lista_resultados.getString("Sigla");
-                visões.add(new Faculdade(sigla, nomeCompleto));
+                int sequencial = lista_resultados.getInt("Sequencial");
+                visões.add(new Faculdade(sequencial, sigla, nomeCompleto));
             }
             lista_resultados.close();
             comando.close();
@@ -62,9 +66,9 @@ public class Faculdade {
         return visões.toArray(new Faculdade[visões.size()]);
     }
     
-    public static Faculdade buscarFaculdade(String sigla) {
+    public static Faculdade buscarFaculdade(int sequencial) {
 
-        String sql = "SELECT * FROM Faculdades WHERE Sigla = ?";
+        String sql = "SELECT * FROM Faculdades WHERE Sequencial = ?";
 
         ResultSet lista_resultados = null;
 
@@ -72,11 +76,12 @@ public class Faculdade {
 
         try {
             PreparedStatement comando = BD.conexão.prepareStatement(sql);
-            comando.setString(1, sigla);
+            comando.setInt(1, sequencial);
             lista_resultados = comando.executeQuery();
             while (lista_resultados.next()) {
                 faculdade = new Faculdade(
-                        sigla,
+                        sequencial,
+                        lista_resultados.getString("Sigla"),
                         lista_resultados.getString("NomeCompleto"),
                         ÁreaConhecimento.values()[lista_resultados.getInt("ÁreaConhecimento")],
                         lista_resultados.getInt("AnoCriação")
@@ -132,11 +137,11 @@ public class Faculdade {
         else return false;
     }
 
-    public static String removerFaculdade(String sigla) {
+    public static String removerFaculdade(int sequencial) {
         try {
-            String sql = "DELETE FROM Faculdades WHERE Sigla = ?";
+            String sql = "DELETE FROM Faculdades WHERE Sequencial = ?";
             PreparedStatement comando = BD.conexão.prepareStatement(sql);
-            comando.setString(1, sigla);
+            comando.setInt(1, sequencial);
             comando.executeUpdate();
             comando.close();
             return null;
@@ -148,13 +153,14 @@ public class Faculdade {
 
     public static String alterarFaculdade(Faculdade faculdade) {
         try {
-            String sql = "UPDATE Faculdades SET AnoCriação = ?, NomeCompleto = ? ,ÁreaConhecimento = ?"
-                    + " WHERE Sigla = ?";
+            String sql = "UPDATE Faculdades SET AnoCriação = ?, NomeCompleto = ? ,ÁreaConhecimento = ?, Sigla = ?"
+                    + " WHERE Sequencial = ?";
             PreparedStatement comando = BD.conexão.prepareStatement(sql);
             comando.setInt(1, faculdade.getAnoCriação());
             comando.setString(2, faculdade.getNomeCompleto());
             comando.setInt(3,faculdade.getÁreaConhecimento().ordinal());
             comando.setString(4, faculdade.getSigla());
+            comando.setInt(5, faculdade.getSequencial());
             comando.executeUpdate();
             comando.close();
             return null;
@@ -164,8 +170,26 @@ public class Faculdade {
         }
     }
 
+    public static int últimoSequencial() {
+        String sql = "SELECT MAX(Sequencial) FROM Faculdades";
+        ResultSet lista_resultados = null;
+        int sequencial = 0;
+        try {
+            PreparedStatement comando = BD.conexão.prepareStatement(sql);
+            lista_resultados = comando.executeQuery();
+            while(lista_resultados.next()){
+                sequencial = lista_resultados.getInt(1);
+            }
+            lista_resultados.close();
+            comando.close();
+        } catch (SQLException exceção_sql) {
+            exceção_sql.printStackTrace();
+        }
+        return sequencial;
+    }
+
     public Faculdade getVisão(){
-        return new Faculdade(sigla, nomeCompleto);
+        return new Faculdade(sequencial,sigla, nomeCompleto);
     }
 
     public String getSigla() {
@@ -182,6 +206,14 @@ public class Faculdade {
 
     public int getAnoCriação() {
         return anoCriação;
+    }
+
+    public int getSequencial() {
+        return sequencial;
+    }
+
+    public void setSequencial(int sequencial) {
+        this.sequencial = sequencial;
     }
 
     public void setSigla(String sigla) {
@@ -202,7 +234,7 @@ public class Faculdade {
 
     @Override
     public String toString() {
-        return "["+sigla+"] "+nomeCompleto;
+        return sequencial+" - ["+sigla+"] "+nomeCompleto;
     }
 
     
