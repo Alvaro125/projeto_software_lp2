@@ -1,31 +1,43 @@
 package interfaces;
 
 import controle.ControladorCadastroProfessoresEfetivos;
-import entidade.ProfessorEfetivado;
+import entidade.Professor;
+import entidade.ProfessorConvidado;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 
-public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
+public class JanelaCadastroProfessores extends javax.swing.JFrame {
 
     ControladorCadastroProfessoresEfetivos controlador;
-    ProfessorEfetivado[] professores_cadastrados;
+    Professor[] professores_cadastrados;
+    PainelProfessorConvidado professor_convidadoPainel;
+    PainelProfessorEfetivo professor_efetivoPainel;
+    PainelProfessorSubstituto professor_substitutoPainel;
 
-    public JanelaCadastroProfessoresEfetivados(ControladorCadastroProfessoresEfetivos controlador) {
-        this.controlador = controlador;
-        professores_cadastrados = ProfessorEfetivado.getVisões();
-        initComponents();
-        limparCampos();
-    }
+
+    public JanelaCadastroProfessores(ControladorCadastroProfessoresEfetivos controlador) {
+    this.controlador = controlador;
+    professores_cadastrados = Professor.getVisões();
+    initComponents();
+    professor_efetivoPainel = new PainelProfessorEfetivo();
+    professor_convidadoPainel = new PainelProfessorConvidado();
+    professor_substitutoPainel = new PainelProfessorSubstituto();
+    especialização_professorTabbedPane.add("Professor Efetivo", professor_efetivoPainel);
+    especialização_professorTabbedPane.add("Professor Substituto", professor_substitutoPainel);
+    especialização_professorTabbedPane.add("Professor Convidado", professor_convidadoPainel);
+    limparCampos();
+}
 
     private void limparCampos(){
         nomeTextField.setText("");
         cpfTextField.setText("");
         emailTextField.setText("");
         titulaçãoTextField.setText("");
+        professor_convidadoPainel.limparCampos();
     }
     
-    private ProfessorEfetivado obterProfessorEfetivadoInformado(){
+    private Professor obterProfessorInformado(){
         String cpf = cpfTextField.getText();
         if (cpf.isEmpty()) return null;
         String nome = nomeTextField.getText();
@@ -34,10 +46,28 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         if (titulação.isEmpty()) return null;
         String email = emailTextField.getText();
         if (email.isEmpty()) return null;
-        return new ProfessorEfetivado(nome, cpf, titulação, email);
+        char sexo = 'X';
+        if (sexoButtonGroup.getSelection() != null)
+            sexo = (char) sexoButtonGroup.getSelection().getMnemonic();
+        else return null;
+        
+        Professor professor = null;
+        int indice_aba_selecionada = especialização_professorTabbedPane.getSelectedIndex();
+        System.out.println(indice_aba_selecionada);
+        switch (indice_aba_selecionada) {
+            case 2:
+                ProfessorConvidado.Ministra ministra = ProfessorConvidado.Ministra
+                        .valueOf(professor_convidadoPainel.getMinistra());
+                String universidade_origem = professor_convidadoPainel.getUniversidade_origem();
+                professor = new ProfessorConvidado(
+                        ministra, universidade_origem, nome, cpf, titulação, email, sexo);
+                break;
+        }
+        
+        return professor;
     }
 
-    private JanelaCadastroProfessoresEfetivados() {
+    private JanelaCadastroProfessores() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -51,8 +81,9 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        sexoButtonGroup = new javax.swing.ButtonGroup();
         professores_cadastradosLabel = new javax.swing.JLabel();
-        professores_cadastradosComboBox = new javax.swing.JComboBox();
+        professores_cadastradosComboBox = new javax.swing.JComboBox<>();
         nomeTextField = new javax.swing.JTextField();
         nomeLabel = new javax.swing.JLabel();
         cpfLabel = new javax.swing.JLabel();
@@ -67,6 +98,11 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         consultarButton = new javax.swing.JButton();
         alterarButton = new javax.swing.JButton();
         removerButton = new javax.swing.JButton();
+        sexoLabel = new javax.swing.JLabel();
+        sexoPanel = new javax.swing.JPanel();
+        masculinoRadioButton = new javax.swing.JRadioButton();
+        femininoRadioButton = new javax.swing.JRadioButton();
+        especialização_professorTabbedPane = new javax.swing.JTabbedPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastrar Professores Efetivos");
@@ -95,12 +131,11 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         nomeTextField.setPreferredSize(new java.awt.Dimension(200, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.ipadx = 332;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(32, 0, 0, 6);
+        gridBagConstraints.insets = new java.awt.Insets(26, 0, 0, 6);
         getContentPane().add(nomeTextField, gridBagConstraints);
 
         nomeLabel.setText("Nome");
@@ -114,7 +149,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         cpfLabel.setText("CPF");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 39, 0, 0);
         getContentPane().add(cpfLabel, gridBagConstraints);
@@ -122,7 +157,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         cpfTextField.setPreferredSize(new java.awt.Dimension(200, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.ipadx = 133;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -132,7 +167,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         titulaçãoLabel.setText("Titulação");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 38, 0, 0);
         getContentPane().add(titulaçãoLabel, gridBagConstraints);
@@ -140,8 +175,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         titulaçãoTextField.setPreferredSize(new java.awt.Dimension(150, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.ipadx = 103;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 0);
@@ -150,9 +184,8 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         emailTextField.setPreferredSize(new java.awt.Dimension(200, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.ipadx = 336;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.2;
@@ -162,7 +195,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         emailLabel.setText("Email");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(8, 39, 0, 0);
         getContentPane().add(emailLabel, gridBagConstraints);
@@ -230,7 +263,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 13;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
         gridBagConstraints.ipadx = 213;
@@ -238,16 +271,59 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(58, 14, 45, 6);
         getContentPane().add(comandosPanel, gridBagConstraints);
 
+        sexoLabel.setText("Sexo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 32);
+        getContentPane().add(sexoLabel, gridBagConstraints);
+
+        sexoPanel.setLayout(new java.awt.GridBagLayout());
+
+        sexoButtonGroup.add(masculinoRadioButton);
+        masculinoRadioButton.setMnemonic('M');
+        masculinoRadioButton.setText("masculino");
+        masculinoRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                masculinoRadioButtonActionPerformed(evt);
+            }
+        });
+        sexoPanel.add(masculinoRadioButton, new java.awt.GridBagConstraints());
+
+        sexoButtonGroup.add(femininoRadioButton);
+        femininoRadioButton.setMnemonic('F');
+        femininoRadioButton.setText("feminino");
+        femininoRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                femininoRadioButtonActionPerformed(evt);
+            }
+        });
+        sexoPanel.add(femininoRadioButton, new java.awt.GridBagConstraints());
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        getContentPane().add(sexoPanel, gridBagConstraints);
+
+        especialização_professorTabbedPane.setMinimumSize(new java.awt.Dimension(400, 200));
+        especialização_professorTabbedPane.setPreferredSize(new java.awt.Dimension(600, 200));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridwidth = 3;
+        getContentPane().add(especialização_professorTabbedPane, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void inserirProfessorEfetivado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inserirProfessorEfetivado
-        ProfessorEfetivado professorEfetivado = obterProfessorEfetivadoInformado();
+        Professor professor = obterProfessorInformado();
         String mensagem_erro = null;
-        if (professorEfetivado != null) mensagem_erro = controlador.inserirProfessorEfetivo(professorEfetivado);
+        if (professor != null) mensagem_erro = controlador.inserirProfessor(professor);
         else mensagem_erro = "Algum atributo do professor não foi informado";
         if (mensagem_erro == null) {
-            ProfessorEfetivado visão = professorEfetivado.getVisão();
+            Professor visão = professor.getVisão();
             professores_cadastradosComboBox.addItem(visão);
             professores_cadastradosComboBox.setSelectedItem(visão);
 //            informarSucesso("Inserção bem sucedida");
@@ -256,11 +332,11 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     }//GEN-LAST:event_inserirProfessorEfetivado
 
     private void consultarProfessorEfetivado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultarProfessorEfetivado
-        ProfessorEfetivado visão =(ProfessorEfetivado) professores_cadastradosComboBox.getSelectedItem();
+        Professor visão =(Professor) professores_cadastradosComboBox.getSelectedItem();
         String mensagem_erro = null;
-        ProfessorEfetivado professorEfetivado = null;
+        Professor professorEfetivado = null;
         if (visão != null){
-            professorEfetivado = ProfessorEfetivado.buscarProfessorEfetivado(visão.getCpf());
+            professorEfetivado = Professor.buscarProfessor(visão.getCpf());
             if (professorEfetivado == null) mensagem_erro="Professor não Cadastrado";
         } else mensagem_erro = "Nenhum Professor Selecionado";
         if (mensagem_erro == null){
@@ -271,11 +347,18 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         } else informarErro(mensagem_erro);
     }//GEN-LAST:event_consultarProfessorEfetivado
 
-    private ProfessorEfetivado getVisãoAlterada(String cpf) {
-        for (ProfessorEfetivado visão : professores_cadastrados) {
+    private Professor getVisãoAlterada(String cpf) {
+        for (Professor visão : professores_cadastrados) {
             if(visão.getCpf().equals(cpf)) return visão;
         }
         return null;
+    }
+
+    private void selecionarSexoRadioButton(char sexo){
+        switch (sexo) {
+            case 'F':femininoRadioButton.setSelected(true);break;
+            case 'M':masculinoRadioButton.setSelected(true);break;
+        }
     }
 
     private void limparPainel(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limparPainel
@@ -283,12 +366,12 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     }//GEN-LAST:event_limparPainel
 
     private void alterarProfessorEfetivado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_alterarProfessorEfetivado
-        ProfessorEfetivado professorEfetivado = obterProfessorEfetivadoInformado();
+        Professor professorEfetivado = obterProfessorInformado();
         String mensagem_erro = null;
         if (professorEfetivado != null) mensagem_erro = controlador.alterarProfessorEfetivo(professorEfetivado);
         else mensagem_erro = "CPF do professor não informado";
         if (mensagem_erro == null){
-            ProfessorEfetivado visão =getVisãoAlterada(professorEfetivado.getCpf());
+            Professor visão =getVisãoAlterada(professorEfetivado.getCpf());
             if(visão != null){
                 visão.setNome(professorEfetivado.getNome());
                 professores_cadastradosComboBox.updateUI();
@@ -300,7 +383,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     }//GEN-LAST:event_alterarProfessorEfetivado
 
     private void removerProfessorEfetivado(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removerProfessorEfetivado
-        ProfessorEfetivado visão =(ProfessorEfetivado) professores_cadastradosComboBox.getSelectedItem();
+        Professor visão =(Professor) professores_cadastradosComboBox.getSelectedItem();
         String mensagem_erro = null;
         if (visão != null) mensagem_erro = controlador.removerProfessorEfetivo(visão.getCpf());
         else mensagem_erro = "Nenhum professor selecionado";
@@ -317,9 +400,14 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_professores_cadastradosComboBoxActionPerformed
 
-    private void informarSucesso(String mensagem) {
-        JOptionPane.showConfirmDialog(this, mensagem, "Informação", JOptionPane.INFORMATION_MESSAGE);
-    }
+    private void masculinoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_masculinoRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_masculinoRadioButtonActionPerformed
+
+    private void femininoRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_femininoRadioButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_femininoRadioButtonActionPerformed
+
     private void informarErro(String mensagem){
         JOptionPane.showMessageDialog(this, mensagem, "Erro", JOptionPane.ERROR_MESSAGE);
     }
@@ -337,14 +425,26 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JanelaCadastroProfessoresEfetivados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JanelaCadastroProfessores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JanelaCadastroProfessoresEfetivados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JanelaCadastroProfessores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JanelaCadastroProfessoresEfetivados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JanelaCadastroProfessores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JanelaCadastroProfessoresEfetivados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(JanelaCadastroProfessores.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -353,7 +453,7 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new JanelaCadastroProfessoresEfetivados().setVisible(true);
+                new JanelaCadastroProfessores().setVisible(true);
             }
         });
     }
@@ -366,13 +466,19 @@ public class JanelaCadastroProfessoresEfetivados extends javax.swing.JFrame {
     private javax.swing.JTextField cpfTextField;
     private javax.swing.JLabel emailLabel;
     private javax.swing.JTextField emailTextField;
+    private javax.swing.JTabbedPane especialização_professorTabbedPane;
+    private javax.swing.JRadioButton femininoRadioButton;
     private javax.swing.JButton inserirButton;
     private javax.swing.JButton limparButton;
+    private javax.swing.JRadioButton masculinoRadioButton;
     private javax.swing.JLabel nomeLabel;
     private javax.swing.JTextField nomeTextField;
-    private javax.swing.JComboBox<ProfessorEfetivado> professores_cadastradosComboBox;
+    private javax.swing.JComboBox<entidade.Professor> professores_cadastradosComboBox;
     private javax.swing.JLabel professores_cadastradosLabel;
     private javax.swing.JButton removerButton;
+    private javax.swing.ButtonGroup sexoButtonGroup;
+    private javax.swing.JLabel sexoLabel;
+    private javax.swing.JPanel sexoPanel;
     private javax.swing.JLabel titulaçãoLabel;
     private javax.swing.JTextField titulaçãoTextField;
     // End of variables declaration//GEN-END:variables
