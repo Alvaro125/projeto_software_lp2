@@ -32,6 +32,6 @@ public class ProfessorConvidado extends Professor{
     }
     
     public String toString() {
-        return cpf+" ["+nome+"]-Conviado";
+        return cpf+" ["+nome+"]-Convidado";
     }
 }
